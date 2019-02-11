@@ -46,7 +46,7 @@ async function doRequests(backend, body, myhandle) {
 	for (var i=0;i<body.length;i++) {
 		var call = body[i];
 		var p = call.path.split("/");
-		var path = __dirname + "/" + p[p.length-1];
+		var path = __dirname + "/../../" + p[p.length-1];
 		var args = [call.token, call.lang, backend, call.owner, call.resourceId];
 		var res = call.resource;
 		console.log("---------------------------");

@@ -1,0 +1,28 @@
+{
+  "name": "midata-nodejs",
+  "version": "1.0.0",
+  "description": "NodeJS library for MIDATA backend services",
+  "main": "midata-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "midata-test" : "node midata_tester.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MIDATAcooperative/midata-nodejs.git"
+  },
+  "keywords": [
+    "midata",
+    "midatajs",
+    "node"
+  ],
+  "author": "Alexander Kreutz (alexander.kreutz@midata.coop)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MIDATAcooperative/midata-nodejs/issues"
+  },
+  "homepage": "https://github.com/MIDATAcooperative/midata-nodejs#readme",
+  "dependencies": {
+    "request-promise-native": "^1.0.5"
+  }
+}

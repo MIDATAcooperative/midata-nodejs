@@ -6,7 +6,8 @@ var midataSettings = {
 	language : process.argv[3],
 	server : process.argv[4],
 	userId : process.argv[5],
-	resourceId : process.argv[6]
+	resourceId : process.argv[6],
+	useFhirR4 : false
 };
 
 var unpackBundle = function(promise) {
@@ -61,12 +62,17 @@ module.exports = {
 		process.stdout.write(JSON.stringify(answerJson));
 	},
 
+	/** Sets the backend to use FHIR R4 (default is STU3)*/
+	useFhirR4 : function(useR4) {
+		midataSettings.useFhirR4 = useR4;
+	},
+
 	/** Read a FHIR resource */
 	fhirRead : function(authToken, resourceType, id, version) {
 		return request({
 			json : true,
 	    	url : midataSettings.server + "/fhir/"+resourceType+"/"+id+(version !== undefined ? "/_history/"+version : ""),
-	    	headers : { "Authorization" : "Bearer " + authToken, "Accept" : "application/fhir+json; fhirVersion=4.0" }
+	    	headers : { "Authorization" : "Bearer " + authToken, "Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json" }
 	    });
 	},
 
@@ -75,7 +81,7 @@ module.exports = {
 		var req = request({
 			json : true,
 	    	url : midataSettings.server + "/fhir/"+resourceType,
-	    	headers : { "Authorization" : "Bearer "+authToken, "Accept" : "application/fhir+json; fhirVersion=4.0" },
+	    	headers : { "Authorization" : "Bearer "+authToken, "Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json" },
 	    	qs : params
 	    });
 		return unbundle ? unpackBundle(req) : req;
@@ -87,7 +93,7 @@ module.exports = {
 	    	method : "POST",
 	    	json : true,
 	    	url : midataSettings.server + "/fhir/"+resource.resourceType,
-	    	headers : { "Authorization" : "Bearer "+authToken , "Prefer" : "return=representation", "Accept" : "application/fhir+json; fhirVersion=4.0" },
+	    	headers : { "Authorization" : "Bearer "+authToken , "Prefer" : "return=representation", "Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json" },
 	    	body : resource
 	    });
 	},
@@ -98,7 +104,7 @@ module.exports = {
 			method : "PUT",
 			json : true,
 			url : midataSettings.server +"/fhir/"+resource.resourceType+"/"+resource.id,
-			headers : { "Authorization" : "Bearer "+authToken, "Prefer" : "return=representation", "Accept" : "application/fhir+json; fhirVersion=4.0"},
+			headers : { "Authorization" : "Bearer "+authToken, "Prefer" : "return=representation", "Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json" },
 	    	body : resource
 		});
 	},
@@ -109,7 +115,7 @@ module.exports = {
 		    	method : "POST",
 		    	json : true,
 		    	url : midataSettings.server + "/fhir",
-		    	headers : { "Authorization" : "Bearer "+authToken, "Accept" : "application/fhir+json; fhirVersion=4.0" },
+		    	headers : { "Authorization" : "Bearer "+authToken, "Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json" },
 		    	body : bundle
 
 	    });

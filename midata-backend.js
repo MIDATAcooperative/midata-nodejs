@@ -1,5 +1,5 @@
 const fs = require("fs");
-const request = require('request-promise-native');
+const axios = require('axios').default;
 
 var midataSettings = {
 	token :	process.argv[2],
@@ -11,12 +11,12 @@ var midataSettings = {
 };
 
 var unpackBundle = function(promise) {
-	return promise.then(function(result) {		
+	return promise.then(function(result) {
 	  if (result && result.entry) {
 		  var resultArray = [];
 		  var entries = result.entry;
-		  for (let i=0;i<entries.length;i++) {		  
-			 resultArray.push(entries[i].resource); 
+		  for (let i=0;i<entries.length;i++) {
+			 resultArray.push(entries[i].resource);
 		  }
 		  return resultArray;
 	  } else {
@@ -69,35 +69,39 @@ module.exports = {
 
 	/** Read a FHIR resource */
 	fhirRead : function(authToken, resourceType, id, version) {
-		return request({
-			json : true,
-	    	url : midataSettings.server + "/fhir/"+resourceType+"/"+id+(version !== undefined ? "/_history/"+version : ""),
-	    	headers : {
-				"Authorization" : "Bearer " + authToken,
-				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
+		return axios({
+			method: "get",
+			url: midataSettings.server + "/fhir/"+resourceType+"/"+id+(version !== undefined ? "/_history/"+version : ""),
+			headers: {
+				"Authorization": "Bearer " + authToken,
+				"Accept": midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
+				"Accept-Encoding": "gzip"
 			}
-	    });
+		}).then(result => {
+			return result.data;
+		});
 	},
 
 	/** Search for FHIR resources */
 	fhirSearch : function(authToken, resourceType, params, unbundle) {
-		var req = request({
-			json : true,
-	    	url : midataSettings.server + "/fhir/"+resourceType,
-	    	headers : {
+		var req = axios({
+			method: "get",
+	    	url: midataSettings.server + "/fhir/"+resourceType,
+	    	headers: {
 				"Authorization" : "Bearer "+authToken,
 				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
 			},
-	    	qs : params
-	    });
+	    	params: params
+		}).then(result => {
+			return result.data;
+		});
 		return unbundle ? unpackBundle(req) : req;
 	},
 
 	/** Create a new FHIR resource */
 	fhirCreate : function(authToken, resource) {
-		return request({
-	    	method : "POST",
-	    	json : true,
+		return axios({
+	    	method : "post",
 	    	url : midataSettings.server + "/fhir/"+resource.resourceType,
 	    	headers : {
 				"Authorization" : "Bearer "+authToken ,
@@ -105,15 +109,14 @@ module.exports = {
 				"Content-Type" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
 				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
 			},
-	    	body : resource
+	    	data : resource
 	    });
 	},
 
 	/** Update a previously read FHIR resource */
 	fhirUpdate : function(authToken, resource) {
-		return request({
-			method : "PUT",
-			json : true,
+		return axios({
+			method : "put",
 			url : midataSettings.server +"/fhir/"+resource.resourceType+"/"+resource.id,
 			headers : {
 				"Authorization" : "Bearer "+authToken,
@@ -121,24 +124,21 @@ module.exports = {
 				"Content-Type" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
 				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
 			},
-	    	body : resource
+	    	data : resource
 		});
 	},
 
 	/** Send a bundle containing changes to the server */
 	fhirTransaction : function(authToken, bundle) {
-		return request({
-		    	method : "POST",
-		    	json : true,
+		return axios({
+		    	method : "post",
 		    	url : midataSettings.server + "/fhir",
 		    	headers : {
 					"Authorization" : "Bearer "+authToken,
 					"Content-Type" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
 					"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
 				},
-		    	body : bundle
-
+		    	data : bundle
 	    });
 	}
-
 };

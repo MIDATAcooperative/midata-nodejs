@@ -9,8 +9,10 @@ function pingForCalls(backend, myhandle) {
 	return axios({
 		url : backend+"/api/debug/getopencalls/"+myhandle,
 		headers: {
-			"Accept-Encoding": "gzip"
-		}
+			"Accept-Encoding": "gzip",
+	        "Connection": "keep-alive"
+		},
+		timeout: 5000
 	})
 	.then(result => {
 		return doRequests(backend, result.data, myhandle);

@@ -110,7 +110,9 @@ module.exports = {
 				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
 			},
 	    	data : resource
-	    });
+		}).then(result => {
+			return result.data;
+		});
 	},
 
 	/** Update a previously read FHIR resource */
@@ -125,6 +127,8 @@ module.exports = {
 				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
 			},
 	    	data : resource
+		}).then(result => {
+			return result.data;
 		});
 	},
 
@@ -139,6 +143,8 @@ module.exports = {
 					"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
 				},
 		    	data : bundle
-	    });
+		}).then(result => {
+			return result.data;
+		});
 	}
 };

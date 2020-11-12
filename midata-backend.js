@@ -89,7 +89,8 @@ module.exports = {
 	    	url: midataSettings.server + "/fhir/"+resourceType,
 	    	headers: {
 				"Authorization" : "Bearer "+authToken,
-				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
+				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
+				"Accept-Encoding": "gzip"
 			},
 	    	params: params
 		}).then(result => {

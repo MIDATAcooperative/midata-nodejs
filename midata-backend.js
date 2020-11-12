@@ -75,7 +75,8 @@ module.exports = {
 			headers: {
 				"Authorization": "Bearer " + authToken,
 				"Accept": midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
-				"Accept-Encoding": "gzip"
+				"Accept-Encoding": "gzip",
+				"Connection": "keep-alive"
 			}
 		}).then(result => {
 			return result.data;
@@ -90,7 +91,8 @@ module.exports = {
 	    	headers: {
 				"Authorization" : "Bearer "+authToken,
 				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
-				"Accept-Encoding": "gzip"
+				"Accept-Encoding": "gzip",
+				"Connection": "keep-alive"
 			},
 	    	params: params
 		}).then(result => {

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "NodeJS library for MIDATA backend services",
   "main": "midata-backend.js",
-  "bin" : {
-    "midata-tester" : "./midata_tester.js"
+  "bin": {
+    "midata-tester": "./midata_tester.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/MIDATAcooperative/midata-nodejs#readme",
   "dependencies": {
-    "request-promise-native": "^1.0.5"
+    "axios": "^0.21.0"
   }
 }

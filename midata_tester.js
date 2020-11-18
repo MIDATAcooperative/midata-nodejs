@@ -1,35 +1,37 @@
 #!/usr/bin/env node
 
 var childProcess = require('child_process');
-var request = require('request');
+const axios = require('axios').default;
 
 
 
 function pingForCalls(backend, myhandle) {
-	//console.log("Checking for triggered subscriptions...");	
-	return new Promise(function (resolve, reject) {
-	
-	request({ 
+	return axios({
 		url : backend+"/api/debug/getopencalls/"+myhandle,
-		json : true
-	}, function(error, res, body) {
-		if (error) { handleError(error);resolve(); }
-		else doRequests(backend, body, myhandle).then(function() { resolve(); });
-	});
-	
+		headers: {
+			"Accept-Encoding": "gzip",
+	        "Connection": "keep-alive"
+		},
+		timeout: 5000
+	})
+	.then(result => {
+		return doRequests(backend, result.data, myhandle);
+	})
+	.catch(error => {
+		handleError(error);
+		resolve();
 	});
 }
 
 function answerCall(backend, myhandle, answer) {
 	if (answer.content && answer.content.length>0) {
 		console.log("Replying with FHIR message:");
-		console.log(answer.content);		
+		console.log(answer.content);
 	}
-	request({ 		
-	    method : "POST",
+	axios({
+	    method : "post",
 		url : backend+"/api/debug/getopencalls/"+myhandle,
-		json : true,
-		body : answer
+		data : answer
 	});
 }
 
@@ -42,7 +44,7 @@ function handleError(error) {
 async function doRequests(backend, body, myhandle) {
 	if (!body.length) return;
     console.log("Processing "+body.length+" actions...");
-    
+
 	for (var i=0;i<body.length;i++) {
 		var call = body[i];
 		var p = call.path.split("/");
@@ -57,8 +59,8 @@ async function doRequests(backend, body, myhandle) {
 		}
 		console.log("Start: '"+path+"' for user="+call.owner+" with language="+call.lang+" for resource="+call.resourceId);
 		var answer = await runScript(path, args, res);
-		answer.returnPath = call._id;		
-		answerCall(backend, myhandle, answer);		
+		answer.returnPath = call._id;
+		answerCall(backend, myhandle, answer);
 		console.log("Done '"+path+"' with status "+answer.status+".");
 		console.log();
 	}
@@ -73,19 +75,19 @@ function runScript(scriptPath, args, res) {
         var buf = "";
 	    // listen for errors as they may prevent the exit event from firing
 	    process.on('error', function (err) {
-	        reject(err);        
+	        reject(err);
 	    });
-	    	    	    
+
 	    process.stdout.on('data', function(data) {
-	        buf += data.toString(); 
+	        buf += data.toString();
 	    });
-	
+
 	    // execute the callback once the process has finished running
-	    process.on('exit', function (code) {        
+	    process.on('exit', function (code) {
 	        var err = code === 0 ? null : new Error('exit code ' + code);
 	        resolve({ status : code, content : buf});
 	    });
-	    
+
 	    if (res != null && process.stdin) process.stdin.end(res);
 
 	});

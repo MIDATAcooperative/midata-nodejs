@@ -149,5 +149,21 @@ module.exports = {
 		}).then(result => {
 			return result.data;
 		});
+	},
+
+	/** Performs an operation on the server */
+	fhirOperation : function(authToken, operation, bundle) {
+		return axios({
+			method : "post",
+			url : midataSettings.server + "/fhir/" + operation,
+			headers : {
+				"Authorization" : "Bearer " + authToken,
+				"Content-Type" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json",
+				"Accept" : midataSettings.useFhirR4 ? "application/fhir+json; fhirVersion=4.0" : "application/fhir+json"
+			},
+			data : bundle
+		}).then(result => {
+			return result.data;
+		});
 	}
 };

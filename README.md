@@ -46,5 +46,7 @@ in your project directory when prompted by the Midata portal in order to try out
 		
 * `midata.fhirUpdate(authToken, resource)` - Updates an existing FHIR resource on the server
 		
-* `midata.fhirTransaction(authToken, bundle)` - Processes a bundle of actions on the server							    	   
+* `midata.fhirTransaction(authToken, bundle)` - Processes a bundle of actions on the server
+
+* `midata.fhirOperation(authToken, operation, bundle)` - Performs an operation on the server				
 		

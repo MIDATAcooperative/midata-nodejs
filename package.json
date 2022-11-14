@@ -1,6 +1,6 @@
 {
   "name": "midata-nodejs",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "NodeJS library for MIDATA backend services",
   "main": "midata-backend.js",
   "bin": {

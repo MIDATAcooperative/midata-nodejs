@@ -1,12 +1,16 @@
 const fs = require("fs");
 const axios = require('axios').default;
 
+var id = process.argv[6];
+if (id.indexOf("/")>0) id = id.split("/")[1];
+
 var midataSettings = {
 	token :	process.argv[2],
 	language : process.argv[3],
 	server : process.argv[4],
 	userId : process.argv[5],
-	resourceId : process.argv[6],
+        resourceId : id,
+	resourceUrl : process.argv[6],
 	useFhirR4 : false
 };
 
@@ -51,6 +55,11 @@ module.exports = {
 	resourceId : function() {
 		return midataSettings.resourceId;
 	},
+
+        /** Get url of resource that has been changed */
+        resourceUrl : function() {
+                return midataSettings.resourceUrl;
+        },
 
 	/** Return FHIR message that triggered request as JSON */
 	receiveFHIRMessage : function() {

@@ -1,15 +1,24 @@
 const fs = require("fs");
 const axios = require('axios').default;
 
-var id = process.argv[6];
-if (id.indexOf("/")>0) id = id.split("/")[1];
+var res = process.argv[6].split("/");
+var id = "-", version = null, type = null;
+if (res.length==4) {
+   type = res[0];
+   id = res[1];
+   version = res[3];
+}
+var token = process.argv[2];
+if (process.argv.length > 7 && process.argv[7].startsWith("token:")) token+=process.argv[7].substring(6);
 
 var midataSettings = {
-	token :	process.argv[2],
+	token :	token,
 	language : process.argv[3],
 	server : process.argv[4],
 	userId : process.argv[5],
-        resourceId : id,
+    resourceId : id,
+    resourceVersion : version,
+    resourceType : type,
 	resourceUrl : process.argv[6],
 	useFhirR4 : false
 };
@@ -56,8 +65,18 @@ module.exports = {
 		return midataSettings.resourceId;
 	},
 
+        /** Get version of resource that has been changed */
+        resourceVersion : function() {
+                return midataSettings.resourceVersion;
+        },
+
+        /** Get type of resource that has been changed */
+        resourceType : function() {
+                return midataSettings.resourceType;
+        },
+
         /** Get url of resource that has been changed */
-        resourceUrl : function() {
+        resourceLocalUrl : function() {
                 return midataSettings.resourceUrl;
         },
 
